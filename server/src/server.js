@@ -10,8 +10,8 @@ io.on('connection', function(socket) {
   sockets.push(socket);
   console.log('new client');
 
-  socket.on('event', function(data) {
-    console.log(data);
+  socket.on('destination', function(destination) {
+    console.log(destination);
   });
 
   socket.on('disconnect', function() {
