@@ -4,27 +4,25 @@ var io = require('socket.io')(server);
 var Game = new require('./game.js');
 var game = new Game();
 
-var sockets = [];
+var sockets = new Map();
 
 io.on('connection', function(socket) {
-  sockets.push(socket);
+  sockets.set(socket, sockets.size);
   console.log('new client');
 
   socket.on('destination', function(destination) {
-    console.log(destination);
+    var i = sockets.get(socket);
+    game.players[i].destination = destination;
   });
 
   socket.on('disconnect', function() {
     console.log('disconnect client');
-    var i = sockets.indexOf(socket);
-    if (i >= 0) {
-      sockets.splice(i, 1);
-    }
+    sockets.delete(socket);
   });
 });
 
 function update() {
-  game.update();
+  game.update(24/1000);
   var getInfo = function(unit) {
     return {
       'team': unit.team,
@@ -37,9 +35,9 @@ function update() {
     'players': game.players.map(getInfo),
     'flags': game.flags.map(getInfo)
   };
-  for (var i = 0; i < sockets.length; i++) {
-    sockets[i].emit('gameState', gameState);
-  }
+  sockets.forEach(function(i, s) {
+    s.emit('gameState', gameState);
+  });
 }
 
 setInterval(update, 1000/24);

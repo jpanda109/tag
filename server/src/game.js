@@ -23,6 +23,16 @@ class GameUnit {
   }
 }
 
+class Player extends GameUnit {
+  constructor(x, y, team) {
+    super(x, y, 10, team);
+    this.destination = {
+      x: x,
+      y: y
+    };
+  }
+}
+
 class Game {
   constructor() {
     this.flags = [
@@ -30,17 +40,44 @@ class Game {
       new GameUnit(50, 0, 5, 1)
     ];
     this.players = [
-      new GameUnit(0, 0, 5, 0)
+      new Player(-50, 20, 0),
+      new Player(50, 20, 1),
+      new Player(-50, 0, 0),
+      new Player(50, 0, 1),
+      new Player(-50, -20, 0),
+      new Player(50, -20, 1)
     ];
   }
 
-  update() {
+  update(deltaTime) {
+    // update positions
+    for (var i = 0; i < this.players.length; i++) {
+      var player = this.players[i];
+      var dx = player.destination.x - player.x
+          , dy = player.destination.y - player.y;
+      if (dx === 0 && dy === 0) {
+        continue;
+      }
+      var norm = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+      dx /= norm;
+      dy /= norm;
+      dx *= deltaTime * 50;
+      dy *= deltaTime * 50;
+      if (Math.abs(dx) > Math.abs(player.destination.x - player.x)) {
+        dx = player.destination.x - player.x;
+      }
+      if (Math.abs(dy) > Math.abs(player.destination.y - player.y)) {
+        dy = player.destination.y - player.y;
+      }
+      player.x += dx;
+      player.y += dy;
+    }
+
+    // update flag collisions
+
+    // update player collisions
   }
 
-  move(playerId, deltaX, deltaY) {
-    this.players[playerId].x += deltaX;
-    this.players[playerId].y += deltaY;
-  }
 }
 
 module.exports = Game;

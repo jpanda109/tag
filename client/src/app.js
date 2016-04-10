@@ -16,15 +16,15 @@ function handleMouseMove(mouse) {
 
 function gameToScreenCoords(x, y) {
   return {
-    x: x+100,
-    y: -y+100
+    x: 6*(x+100),
+    y: 3*(-y+100)
   };
 }
 
 function screenToGameCoords(x, y) {
   return {
-    x: x-100,
-    y: -y+100
+    x: x/6-100,
+    y: -y/3+100
   };
 }
 
