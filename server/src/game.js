@@ -44,8 +44,8 @@ class Flag extends GameUnit {
 class Game {
   constructor() {
     this.flags = [
-      new Flag(-50, 0, 0),
-      new Flag(50, 0, 1)
+      new Flag(-100, 0, 0),
+      new Flag(100, 0, 1)
     ];
     this.players = [
       new Player(-50, 30, 0),
@@ -100,9 +100,13 @@ class Game {
     // update flag collisions
     for (let i = 0; i < this.players.length; i++) {
       let player = this.players[i];
-      var enemyFlag = this.flags[(player.team+1)%2];
+      let enemyFlag = this.flags[(player.team+1)%2];
       if (enemyFlag.attached < 0 && player.collides(enemyFlag)) {
         enemyFlag.attached = i;
+      }
+      let ownFlag = this.flags[player.team];
+      if (player.collides(ownFlag)) {
+        player.jailed = true;
       }
     }
 

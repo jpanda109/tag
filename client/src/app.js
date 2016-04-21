@@ -1,11 +1,13 @@
-var io = require('socket.io-client');
-var socket = io('http://localhost:8000');
+'use strict';
 
-var canvas = document.getElementById('canvas');
+let io = require('socket.io-client');
+let socket = io('http://localhost:8000');
+
+let canvas = document.getElementById('canvas');
 canvas.addEventListener('mousemove', handleMouseMove, false);
-var ctx = canvas.getContext('2d');
+let ctx = canvas.getContext('2d');
 
-var destination = {
+let destination = {
   x: 0,
   y: 0
 };
@@ -34,12 +36,22 @@ socket.on('connect', function() {
 
 socket.on('gameState', function(data) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (var i = 0; i < data.players.length; i++) {
-    var p = data.players[i];
-    var color = p.team === 0 ? '#FF0000' : '#00cc00';
+  for (let i = 0; i < data.players.length; i++) {
+    let p = data.players[i];
+    let color = p.team === 0 ? '#FF0000' : '#00cc00';
     ctx.beginPath();
-    var coords = gameToScreenCoords(p.x, p.y);
+    let coords = gameToScreenCoords(p.x, p.y);
     ctx.arc(coords.x, coords.y, p.r*3, 0, 2*Math.PI);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+  for (let i = 0; i < data.flags.length; i++) {
+    let f = data.flags[i];
+    let color = f.team === 0 ? '#FF0000' : '#00cc00';
+    ctx.beginPath();
+    let coords = gameToScreenCoords(f.x, f.y);
+    ctx.arc(coords.x, coords.y, f.r*3, 0, 2*Math.PI);
     ctx.stroke();
     ctx.fillStyle = color;
     ctx.fill();

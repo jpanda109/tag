@@ -1,17 +1,19 @@
-var server  = require('http').createServer();
-var io = require('socket.io')(server);
+'use strict';
 
-var Game = new require('./game.js');
-var game = new Game();
+let server  = require('http').createServer();
+let io = require('socket.io')(server);
 
-var sockets = new Map();
+let Game = new require('./game.js');
+let game = new Game();
+
+let sockets = new Map();
 
 io.on('connection', function(socket) {
   sockets.set(socket, sockets.size);
   console.log('new client');
 
   socket.on('destination', function(destination) {
-    var i = sockets.get(socket);
+    let i = sockets.get(socket);
     game.players[i].destination = destination;
   });
 
@@ -23,7 +25,7 @@ io.on('connection', function(socket) {
 
 function update() {
   game.update(24/1000);
-  var getInfo = function(unit) {
+  let getInfo = function(unit) {
     return {
       'team': unit.team,
       'x': unit.x,
@@ -31,7 +33,7 @@ function update() {
       'r': unit.radius
     };
   };
-  var gameState = {
+  let gameState = {
     'players': game.players.map(getInfo),
     'flags': game.flags.map(getInfo)
   };
