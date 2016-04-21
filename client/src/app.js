@@ -16,14 +16,14 @@ function handleMouseMove(mouse) {
 
 function gameToScreenCoords(x, y) {
   return {
-    x: 6*(x+100),
+    x: 3*(x+200),
     y: 3*(-y+100)
   };
 }
 
 function screenToGameCoords(x, y) {
   return {
-    x: x/6-100,
+    x: x/3-200,
     y: -y/3+100
   };
 }
@@ -33,14 +33,13 @@ socket.on('connect', function() {
 });
 
 socket.on('gameState', function(data) {
-  console.log(data);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (var i = 0; i < data.players.length; i++) {
     var p = data.players[i];
     var color = p.team === 0 ? '#FF0000' : '#00cc00';
     ctx.beginPath();
     var coords = gameToScreenCoords(p.x, p.y);
-    ctx.arc(coords.x, coords.y, p.r, 0, 2*Math.PI);
+    ctx.arc(coords.x, coords.y, p.r*3, 0, 2*Math.PI);
     ctx.stroke();
     ctx.fillStyle = color;
     ctx.fill();
