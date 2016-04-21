@@ -25,17 +25,24 @@ io.on('connection', function(socket) {
 
 function update() {
   game.update(24/1000);
-  let getInfo = function(unit) {
-    return {
-      'team': unit.team,
-      'x': unit.x,
-      'y': unit.y,
-      'r': unit.radius
-    };
-  };
   let gameState = {
-    'players': game.players.map(getInfo),
-    'flags': game.flags.map(getInfo)
+    'players': game.players.map(function (unit) {
+      return {
+        'team': unit.team,
+        'x': unit.x,
+        'y': unit.y,
+        'r': unit.radius,
+        'jailed': unit.jailed
+      };
+    }),
+    'flags': game.flags.map(function(unit) {
+      return {
+        'team': unit.team,
+        'x': unit.x,
+        'y': unit.y,
+        'r': unit.radius
+      };
+    })
   };
   sockets.forEach(function(i, s) {
     s.emit('gameState', gameState);

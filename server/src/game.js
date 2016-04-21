@@ -55,6 +55,7 @@ class Game {
       new Player(-50, -30, 0),
       new Player(50, -30, 1)
     ];
+    this.winner = -1;
   }
 
   // if in own zone, return 1; if in enemy zone, return -1; if both, return 0
@@ -71,6 +72,10 @@ class Game {
   }
 
   update(deltaTime) {
+    if (this.winner > -1) {
+      return;
+    }
+
     // update positions
     for (let i = 0; i < this.players.length; i++) {
       let player = this.players[i];
@@ -106,7 +111,14 @@ class Game {
       }
       let ownFlag = this.flags[player.team];
       if (player.collides(ownFlag)) {
-        player.jailed = true;
+        player.x = player.team === 0 ? -50 : 50;
+        if (i === 0 || i === 1) {
+          player.y = 30;
+        } else if (i === 2 || i === 3) {
+          player.y = 0;
+        } else {
+          player.y = -30;
+        }
       }
     }
 
@@ -122,6 +134,12 @@ class Game {
           if (this.getZone(curPlayer) === 1
               && this.getZone(otherPlayer) === -1) {
             otherPlayer.jailed = true;
+            let flag = this.flags[curPlayer.team];
+            if (flag.attached === j) {
+              flag.attached = -1;
+              flag.x = flag.team === 0 ? -100 : 100;
+              flag.y = 0;
+            }
           }
         } else if (curPlayer.team === otherPlayer.team) {  // handle teammate collision
           if (!curPlayer.jailed
@@ -141,6 +159,14 @@ class Game {
         flag.y = this.players[flag.attached].y;
       }
     }
+
+    // check win condition
+    if (this.flags[0].x > 0) {
+      this.winner = 1;
+    } else if (this.flags[1].x < 0) {
+      this.winner = 0;
+    }
+
   }
 
 }
